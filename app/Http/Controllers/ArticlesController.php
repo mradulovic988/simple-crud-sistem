@@ -36,20 +36,43 @@ class ArticlesController extends Controller
     public function store()
     {
         // Persist the new resource
-        $article = new Article();
+        // $article = new Article();
 
-        request()->validate([
+        // We can do this on this way
+        // $validatedAttributes = request()->validate([
+        //     'title' => 'required',
+        //     'excerpt' => 'required',
+        //     'body' => 'required'
+        // ]);
+
+        // or on this way
+        Article::create($this->validateArticle());
+
+        // $article->title = request('title');
+        // $article->excerpt = request('excerpt');
+        // $article->body = request('body');
+
+        // $article->save();
+
+        // We can use it as an array
+        // Article::create([
+        //     'title' => request('title'),
+        //     'excerpt' => request('excerpt'),
+        //     'body' => request('body')
+        // ]);
+
+        // Article::create($validatedAttributes);
+
+        return redirect(route('articles.index'));
+    }
+
+    protected function validateArticle()
+    {
+        return  request()->validate([
             'title' => 'required',
             'excerpt' => 'required',
             'body' => 'required'
         ]);
-
-        $article->title = request('title');
-        $article->excerpt = request('excerpt');
-        $article->body = request('body');
-
-        $article->save();
-        return redirect('/articles');
     }
 
     public function edit(Article $article) // We can pass an $id as well
@@ -64,22 +87,27 @@ class ArticlesController extends Controller
     public function update(Article $article) // We can pass an $id as well
     {
         // Persist the edited resource
-        
+
         // $article = Article::find($id);
 
-        request()->validate([
-            'title' => 'required',
-            'excerpt' => 'required',
-            'body' => 'required'
-        ]);
+        $article->update($this->validateArticle());
 
-        $article->title = request('title');
-        $article->excerpt = request('excerpt');
-        $article->body = request('body');
+        // request()->validate([
+        //     'title' => 'required',
+        //     'excerpt' => 'required',
+        //     'body' => 'required'
+        // ]);
 
-        $article->save();
+        // $article->title = request('title');
+        // $article->excerpt = request('excerpt');
+        // $article->body = request('body');
 
-        return redirect('/articles/'.$article->id);
+        // $article->save();
+
+        // We can do on this way
+        // return redirect(route('articles.show', $article));
+
+        return redirect($article->path());
     }
 
     public function delete()
